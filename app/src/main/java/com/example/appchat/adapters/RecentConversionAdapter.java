@@ -21,7 +21,7 @@ import com.example.appchat.models.User;
 public class RecentConversionAdapter extends RecyclerView.Adapter<RecentConversionAdapter.ConversionViewHolder> {
     private final List<ChatMessage> chatMessages;
     private final ConversionListener conversionListener;
-
+    public static String userID;
     public RecentConversionAdapter(List<ChatMessage> chatMessages, ConversionListener conversionListener) {
         this.chatMessages = chatMessages;
         this.conversionListener = conversionListener;
@@ -68,6 +68,7 @@ public class RecentConversionAdapter extends RecyclerView.Adapter<RecentConversi
                 user.image = chatMessage.conversionImage;
                 conversionListener.onConversionClicked(user);
                 Context context = binding.getRoot().getContext();
+                userID=user.id;
                 Toast.makeText(context, "User ID: " + user.id, Toast.LENGTH_SHORT).show();
             });
         }

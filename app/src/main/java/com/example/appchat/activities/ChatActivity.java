@@ -1,5 +1,6 @@
 package com.example.appchat.activities;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -7,7 +8,12 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
+import com.example.appchat.R;
+import com.example.appchat.adapters.RecentConversionAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -30,6 +36,25 @@ import com.example.appchat.models.ChatMessage;
 import com.example.appchat.models.User;
 import com.example.appchat.utils.Constants;
 import com.example.appchat.utils.PreferenceManager;
+import com.zegocloud.uikit.internal.ZegoUIKitLanguage;
+import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig;
+import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallService;
+import com.zegocloud.uikit.prebuilt.call.event.CallEndListener;
+import com.zegocloud.uikit.prebuilt.call.event.ErrorEventsListener;
+import com.zegocloud.uikit.prebuilt.call.event.SignalPluginConnectListener;
+import com.zegocloud.uikit.prebuilt.call.event.ZegoCallEndReason;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
+import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoCallInvitationData;
+import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoTranslationText;
+import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoUIKitPrebuiltCallConfigProvider;
+import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
+import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+
+import org.json.JSONObject;
+
+import im.zego.zim.enums.ZIMConnectionEvent;
+import im.zego.zim.enums.ZIMConnectionState;
+import timber.log.Timber;
 
 public class ChatActivity extends BaseActivity {
     private ActivityChatBinding binding;
@@ -227,5 +252,103 @@ private void sendNotification(String messageBody){
     protected void onResume() {
         super.onResume();
         listenAvailabilityOfReceiver();
+    }
+    long appID =161527273 ;
+    String appSign ="b6c05ed3fb1a48773e7181e33642c106629c0b4eacc3e39ddc32fcd0ddb0a046" ;
+    String userId= RecentConversionAdapter.userID;
+    private void initVideoButton() {
+        ZegoSendCallInvitationButton newVideoCall = findViewById(R.id.videoicon);
+        newVideoCall.setIsVideoCall(true);
+
+        //resourceID can be used to specify the ringtone of an offline call invitation,
+        //which must be set to the same value as the Push Resource ID in ZEGOCLOUD Admin Console.
+        //This only takes effect when the notifyWhenAppRunningInBackgroundOrQuit is true.
+        //        newVideoCall.setResourceID("zegouikit_call");
+        newVideoCall.setResourceID("zego_data");
+
+        newVideoCall.setOnClickListener(v -> {
+            String targetUserID = userId;
+            String[] split = targetUserID.split(",");
+            List<ZegoUIKitUser> users = new ArrayList<>();
+            for (String userID : split) {
+                String userName = userID + "_name";
+                users.add(new ZegoUIKitUser(userID, userName));
+            }
+            newVideoCall.setInvitees(users);
+        });
+    }
+
+    private void initVoiceButton() {
+        ZegoSendCallInvitationButton newVoiceCall = findViewById(R.id.voiceicon);
+        newVoiceCall.setIsVideoCall(false);
+
+        //resourceID can be used to specify the ringtone of an offline call invitation,
+        //which must be set to the same value as the Push Resource ID in ZEGOCLOUD Admin Console.
+        //This only takes effect when the notifyWhenAppRunningInBackgroundOrQuit is true.
+        //        newVoiceCall.setResourceID("zegouikit_call");
+        newVoiceCall.setResourceID("zego_data");
+
+        newVoiceCall.setOnClickListener(v -> {
+            String targetUserID = userId;
+            String[] split = targetUserID.split(",");
+            List<ZegoUIKitUser> users = new ArrayList<>();
+            for (String userID : split) {
+                String userName = userID + "_name";
+                users.add(new ZegoUIKitUser(userID, userName));
+            }
+            newVoiceCall.setInvitees(users);
+        });
+    }
+
+    public void initCallInviteService(long appID, String appSign, String userID, String userName) {
+
+        ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
+
+        callInvitationConfig.translationText = new ZegoTranslationText(ZegoUIKitLanguage.CHS);
+        callInvitationConfig.provider = new ZegoUIKitPrebuiltCallConfigProvider() {
+            @Override
+            public ZegoUIKitPrebuiltCallConfig requireConfig(ZegoCallInvitationData invitationData) {
+                ZegoUIKitPrebuiltCallConfig config = ZegoUIKitPrebuiltCallInvitationConfig.generateDefaultConfig(
+                        invitationData);
+                return config;
+            }
+        };
+        //
+        ZegoUIKitPrebuiltCallService.events.setErrorEventsListener(new ErrorEventsListener() {
+            @Override
+            public void onError(int errorCode, String message) {
+                Timber.d("onError() called with: errorCode = [" + errorCode + "], message = [" + message + "]");
+            }
+        });
+        ZegoUIKitPrebuiltCallService.events.invitationEvents.setPluginConnectListener(
+                new SignalPluginConnectListener() {
+                    @Override
+                    public void onSignalPluginConnectionStateChanged(ZIMConnectionState state, ZIMConnectionEvent event,
+                                                                     JSONObject extendedData) {
+                        Timber.d(
+                                "onSignalPluginConnectionStateChanged() called with: state = [" + state + "], event = [" + event
+                                        + "], extendedData = [" + extendedData + "]");
+                    }
+                });
+
+        ZegoUIKitPrebuiltCallService.init(getApplication(), appID, appSign, userID, userName,
+                callInvitationConfig);
+
+        ZegoUIKitPrebuiltCallService.events.callEvents.setCallEndListener(new CallEndListener() {
+            @Override
+            public void onCallEnd(ZegoCallEndReason callEndReason, String jsonObject) {
+                Timber.d("onCallEnd() called with: callEndReason = [" + callEndReason + "], jsonObject = [" + jsonObject
+                        + "]");
+            }
+        });
+
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // when use minimize feature,it you swipe close this activity,call endCall()
+        // to make sure call is ended and the float window is dismissed.
+        ZegoUIKitPrebuiltCallService.endCall();
+
     }
 }

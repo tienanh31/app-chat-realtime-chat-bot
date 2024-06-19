@@ -17,7 +17,7 @@
         app:layout_constraintBottom_toTopOf="@id/layoutSend"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="0dp" />
+        tools:layout_editor_absoluteX="36dp" />
 
     <View
         android:id="@+id/headerBackground"
@@ -41,14 +41,26 @@
         app:tint="@color/white" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageInfo"
+        android:id="@+id/voiceicon"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="40dp"
+        android:padding="@dimen/_5sdp"
+        android:src="@drawable/voicemail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/videoicon"
+
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:layout_marginTop="@dimen/_12sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        android:layout_marginRight="@dimen/_16sdp"
+        android:layout_marginEnd="4dp"
         android:padding="@dimen/_5sdp"
-        android:src="@drawable/ic_info"
+        android:src="@drawable/videocamera"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/white" />
@@ -66,7 +78,7 @@
         android:textSize="@dimen/_14ssp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/imageBack"
-        app:layout_constraintEnd_toStartOf="@id/imageInfo"
+        app:layout_constraintEnd_toStartOf="@id/voiceicon"
         app:layout_constraintStart_toEndOf="@id/imageBack"
         app:layout_constraintTop_toTopOf="@id/imageBack" />
 
