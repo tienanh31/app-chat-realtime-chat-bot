@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".activities.ProfileActivity">
+
+    <TextView
+        android:id="@+id/tvProfileTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User Profile"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp" />
+    <ImageView
+        android:id="@+id/ivAvatar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/ic_back"
+        android:background="@drawable/circular_image"
+        android:scaleType="centerCrop"
+        android:clickable="true"
+        android:focusable="true"
+         />
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:textSize="16sp"
+        android:layout_below="@id/tvProfileTitle"
+        android:layout_marginTop="32dp" />
+
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your name"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        android:layout_below="@id/tvName"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/tvGmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gmail"
+        android:textSize="16sp"
+        android:layout_below="@id/etName"
+        android:layout_marginTop="32dp" />
+
+    <EditText
+        android:id="@+id/etGmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your Gmail"
+        android:minHeight="48dp"
+        android:inputType="textEmailAddress"
+        android:layout_below="@id/tvGmail"
+        android:layout_marginTop="16dp"
+        android:enabled="false"
+        android:focusable="false"/>
+
+    <TextView
+        android:id="@+id/tvPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Password"
+        android:textSize="16sp"
+        android:layout_below="@id/etGmail"
+        android:layout_marginTop="32dp" />
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your password"
+        android:minHeight="48dp"
+        android:inputType="textPassword"
+        android:layout_below="@id/tvPassword"
+        android:layout_marginTop="16dp"
+        android:enabled="false"
+        android:focusable="false"/>
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_below="@id/etPassword"
+        android:layout_marginTop="48dp" />
+
+</RelativeLayout>
