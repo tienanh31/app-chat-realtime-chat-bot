@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.appchat.databinding.ActivitySignInBinding;
+import com.example.appchat.utils.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,11 +19,17 @@ import com.example.appchat.databinding.ItemContainerRecentConversionBinding;
 import com.example.appchat.listeners.ConversionListener;
 import com.example.appchat.models.ChatMessage;
 import com.example.appchat.models.User;
+import com.example.appchat.utils.Constants;
 
 public class RecentConversionAdapter extends RecyclerView.Adapter<RecentConversionAdapter.ConversionViewHolder> {
+    private RecentConversionAdapter binding;
+
     private final List<ChatMessage> chatMessages;
+    private PreferenceManager preferenceManager;
     private final ConversionListener conversionListener;
     public static String userID;
+    public static User user = new User();
+
     public RecentConversionAdapter(List<ChatMessage> chatMessages, ConversionListener conversionListener) {
         this.chatMessages = chatMessages;
         this.conversionListener = conversionListener;
@@ -62,14 +70,12 @@ public class RecentConversionAdapter extends RecyclerView.Adapter<RecentConversi
             binding.textName.setText(chatMessage.conversionName);
             binding.textRecentMessage.setText(chatMessage.message);
             binding.getRoot().setOnClickListener(v -> {
-                User user = new User();
                 user.id = chatMessage.conversionId;
                 user.name = chatMessage.conversionName;
                 user.image = chatMessage.conversionImage;
                 conversionListener.onConversionClicked(user);
                 Context context = binding.getRoot().getContext();
                 userID=user.id;
-                Toast.makeText(context, "User ID: " + user.id, Toast.LENGTH_SHORT).show();
             });
         }
     }
