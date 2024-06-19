@@ -7,9 +7,10 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Toast;
+import android.Manifest.permission;
 
 import androidx.appcompat.app.AlertDialog;
-
+import com.permissionx.guolindev.PermissionX;
 import com.example.appchat.R;
 import com.example.appchat.adapters.RecentConversionAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,8 +50,11 @@ import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoUIKitPrebuiltCallConfigProvider;
 import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
-
+import com.permissionx.guolindev.callback.ExplainReasonCallback;
+import com.permissionx.guolindev.callback.RequestCallback;
+import com.permissionx.guolindev.request.ExplainScope;
 import org.json.JSONObject;
+import androidx.annotation.NonNull;
 
 import im.zego.zim.enums.ZIMConnectionEvent;
 import im.zego.zim.enums.ZIMConnectionState;
@@ -75,6 +79,22 @@ public class ChatActivity extends BaseActivity {
         loadReceiverDetail();
         init();
         listenerMessages();
+        initCallInviteService(appID, appSign, preferenceManager.getString(Constants.KEY_USER_ID), preferenceManager.getString(Constants.KEY_NAME));
+        initVoiceButton();
+        initVideoButton();
+        PermissionX.init(this).permissions(permission.SYSTEM_ALERT_WINDOW)
+                .onExplainRequestReason(new ExplainReasonCallback() {
+                    @Override
+                    public void onExplainReason(@NonNull ExplainScope scope, @NonNull List<String> deniedList) {
+                        String message = "We need your consent for the following permissions in order to use the offline call function properly";
+                        scope.showRequestReasonDialog(deniedList, message, "Allow", "Deny");
+                    }
+                }).request(new RequestCallback() {
+                    @Override
+                    public void onResult(boolean allGranted, @NonNull List<String> grantedList,
+                                         @NonNull List<String> deniedList) {
+                    }
+                });
     }
 
     private void init() {
@@ -255,7 +275,6 @@ private void sendNotification(String messageBody){
     }
     long appID =161527273 ;
     String appSign ="b6c05ed3fb1a48773e7181e33642c106629c0b4eacc3e39ddc32fcd0ddb0a046" ;
-    String userId= RecentConversionAdapter.userID;
     private void initVideoButton() {
         ZegoSendCallInvitationButton newVideoCall = findViewById(R.id.videoicon);
         newVideoCall.setIsVideoCall(true);
@@ -267,11 +286,11 @@ private void sendNotification(String messageBody){
         newVideoCall.setResourceID("zego_data");
 
         newVideoCall.setOnClickListener(v -> {
-            String targetUserID = userId;
+            String targetUserID = RecentConversionAdapter.user.id;
             String[] split = targetUserID.split(",");
             List<ZegoUIKitUser> users = new ArrayList<>();
             for (String userID : split) {
-                String userName = userID + "_name";
+                String userName = preferenceManager.getString(Constants.KEY_NAME);
                 users.add(new ZegoUIKitUser(userID, userName));
             }
             newVideoCall.setInvitees(users);
@@ -281,19 +300,17 @@ private void sendNotification(String messageBody){
     private void initVoiceButton() {
         ZegoSendCallInvitationButton newVoiceCall = findViewById(R.id.voiceicon);
         newVoiceCall.setIsVideoCall(false);
-
         //resourceID can be used to specify the ringtone of an offline call invitation,
         //which must be set to the same value as the Push Resource ID in ZEGOCLOUD Admin Console.
         //This only takes effect when the notifyWhenAppRunningInBackgroundOrQuit is true.
         //        newVoiceCall.setResourceID("zegouikit_call");
         newVoiceCall.setResourceID("zego_data");
-
         newVoiceCall.setOnClickListener(v -> {
-            String targetUserID = userId;
+            String targetUserID = RecentConversionAdapter.user.id;
             String[] split = targetUserID.split(",");
             List<ZegoUIKitUser> users = new ArrayList<>();
             for (String userID : split) {
-                String userName = userID + "_name";
+                String userName = preferenceManager.getString(Constants.KEY_NAME);
                 users.add(new ZegoUIKitUser(userID, userName));
             }
             newVoiceCall.setInvitees(users);

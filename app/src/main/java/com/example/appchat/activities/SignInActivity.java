@@ -1,7 +1,10 @@
 package com.example.appchat.activities;
 
+import static com.example.appchat.utils.Constants.KEY_USER_ID;
+
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -59,12 +62,13 @@ public class SignInActivity extends AppCompatActivity {
 
                         if (BCrypt.verifyer().verify(inputPassword.toCharArray(), hashedPassword).verified) {
                             preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                            preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getId());
+                            preferenceManager.putString(KEY_USER_ID, documentSnapshot.getId());
                             preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
                             preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
 
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            Context context = binding.getRoot().getContext();
                             startActivity(intent);
                         } else {
                             loading(false);

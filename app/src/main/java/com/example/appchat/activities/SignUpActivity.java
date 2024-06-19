@@ -62,6 +62,12 @@ public class SignUpActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    // Hàm kiểm tra mật khẩu
+    private boolean isValidPassword(String password) {
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$";
+        return password.matches(regex);
+    }
+
     private void signUp() {
         loading(true);
         String password = BCrypt.withDefaults().hashToString(12, binding.inputPassword.getText().toString().toCharArray());
@@ -91,6 +97,7 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
+
     private Boolean isValidSignUp() {
         if (encodeImage == null) {
             showToast("Pls, Select an avt!");
@@ -110,6 +117,11 @@ public class SignUpActivity extends AppCompatActivity {
         } else if (binding.inputPassword.getText().toString().trim().length() < 6) {
             showToast("Password must be at least 6 characters!");
             return false;
+        }
+            else if (!isValidPassword(binding.inputPassword.getText().toString().trim())) {
+                showToast("Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character!");
+                return false;
+
         } else if (binding.inputConfirmPassword.getText().toString().trim().isEmpty()) {
             showToast("Pls, Enter confirm password!");
             return false;

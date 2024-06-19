@@ -15,12 +15,12 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=/Users/macos/.android/avd/Pixel_3a_API_33_arm64-v8a.avd" />
+                <DeviceId pluginId="Default" identifier="serial=192.168.56.101:5555;connection=7934ffbd" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="Default" identifier="serial=127.0.0.1:6555;connection=f88b2536" />
+                <DeviceId pluginId="Default" identifier="serial=192.168.56.102:5555;connection=fd05e152" />
               </handle>
             </Target>
           </targets>
