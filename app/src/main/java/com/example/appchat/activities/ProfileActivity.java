@@ -66,6 +66,7 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Error: User ID is null", Toast.LENGTH_SHORT).show();
             return;
         }
+        db = FirebaseFirestore.getInstance();
 
         docRef = db.collection("users").document(userId);
 
@@ -73,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         btnSave.setOnClickListener(v -> saveDataToFirestore());
         ivAvatar.setOnClickListener(v -> pickImage());
+
     }
 
     private void pickImage() {

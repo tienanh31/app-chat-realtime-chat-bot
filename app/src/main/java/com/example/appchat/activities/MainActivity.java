@@ -12,6 +12,7 @@ import com.example.appchat.GeminiChatBot;
 import com.example.appchat.R;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.example.appchat.adapters.RecentConversionAdapter;
 import com.example.appchat.databinding.ActivityMainBinding;
@@ -37,7 +39,8 @@ public class MainActivity extends BaseActivity implements ConversionListener {
     private List<ChatMessage> conversations;
     private RecentConversionAdapter conversionAdapter;
     private FirebaseFirestore database;
-
+    private FirebaseFirestore db;
+    private DocumentReference docRef;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,10 +52,29 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         setListeners();
         init();
         listenerConversations();
+
+        db = FirebaseFirestore.getInstance();
+        String userId = preferenceManager.getString(Constants.KEY_USER_ID);
+        docRef = db.collection("users").document(userId);
+
+        fetchDataFromFirestore();
     }
     long appID = 161527273;
     String appSign ="b6c05ed3fb1a48773e7181e33642c106629c0b4eacc3e39ddc32fcd0ddb0a046";
 
+    private void fetchDataFromFirestore() {
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Map<String, Object> data = document.getData();
+                    if (data != null) {
+                        binding.textName.setText((String) data.get("name"));
+                    }
+                }
+            }
+        });
+    }
     private void init() {
         conversations = new ArrayList<>();
         conversionAdapter = new RecentConversionAdapter(conversations, this);
@@ -68,7 +90,6 @@ public class MainActivity extends BaseActivity implements ConversionListener {
     }
 
     private void userDetail() {
-        binding.textName.setText(preferenceManager.getString(Constants.KEY_NAME));
         byte[] bytes = Base64.decode(preferenceManager.getString(Constants.KEY_IMAGE), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         binding.imageProfile.setImageBitmap(bitmap);

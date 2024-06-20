@@ -77,6 +77,7 @@ public class RecentConversionAdapter extends RecyclerView.Adapter<RecentConversi
                 Context context = binding.getRoot().getContext();
                 userID=user.id;
             });
+
         }
     }
 
